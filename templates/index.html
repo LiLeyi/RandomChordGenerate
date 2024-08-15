@@ -1,0 +1,127 @@
+<!DOCUTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Random Chord Generate</title>
+    </head>
+
+    <body>
+        <h1>Random Chord Generate</h1><br>
+
+        <div id="chord_generate_mode_select_div">
+            <select id="chord_generate_mode_select">
+                <option value="complete_random">Complete random</option>
+                <option value="diatonic_random">Diatonic random</option>
+                <option value="common_chords_progression">Common chord progression</option>
+                <option value="custom_chords_progression">Custom chord progression</option>
+            </select><br><br>
+        </div>
+
+
+        <div id="mode_complete_random">
+            <select id="root_note_pattern">
+                <option value="only_natural_pitch">Only natural pitch</option>
+                <option value="include_halftone_pitch">Include halftone pitch</option>
+            </select><br><br>
+            <fieldset id="chord_pattern">
+                <legend>Choose the chord types</legend>
+                <div>
+                    <input type="checkbox" id="common_triad" checked>
+                    <label for="common_triad">Common Triad</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="uncommon_triad">
+                    <label for="uncommon_triad">Uncommon Triad</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="common_seventh_chord" checked />
+                    <label for="common_seventh_chord">Common Seventh Chord</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="uncommon_seventh_chord">
+                    <label for="uncommon_seventh_chord">Uncommon Seventh Chord</label>
+                </div>
+            </fieldset><br>
+        </div>
+
+
+        <div id="mode_diatonic_random">
+            <select id="mode_select">
+                {% for mode_name in mode_options %}
+                <option value="{{mode_name}}">{{mode_name}}</option><br>
+                {% endfor %}
+            </select>
+            <label for="mode_select">Choose a mode</label>
+            <br><br>
+            <select id="root_natural_note_select">
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+            </select>
+            <select id="accidental">
+                <option value="natural">♮</option>
+                <option value="flat">♭</option>
+                <option value="sharp">♯</option>
+            </select>
+            <label for="accidental">Choose a root note</label><br><br>
+            <fieldset  id="chord_pattern">
+                <legend>Choose the chord types</legend>
+                <div>
+                    <input type="checkbox" id="mode_diatonic_random_triads" checked>
+                    <label for="mode_diatonic_random_triads">Triad</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="mode_diatonic_random_seventh_chords">
+                    <label for="mode_diatonic_random_seventh_chords">Seventh chord</label>
+                </div>
+        </div>
+
+
+        <div id="mode_custom_chords_progression"></div>
+
+
+        <fieldset id="show_pattern">
+            <legend>Choose what to show</legend>
+            <div>
+                <input type="checkbox" id="show_chord_series" checked>
+                <label for="show_chord_name">Show chord series</label>
+            </div>
+            <div>
+                <input type="checkbox" id="show_chord_name" checked>
+                <label for="show_chord_name">Show chord name</label>
+            </div>
+            <div>
+                <input type="checkbox" id="show_chord_notes">
+                <label for="show_chord_notes">Show chord notes</label>
+            </div>
+        </fieldset><br>
+        <button type="button" id="submit">Submit</button><br><br><br>
+        <div id="chord_series_show"></div>
+        <div id="chord_name_show"></div><br>
+        <div id="chord_notes_show"></div><br><br>
+        <form>
+            <input type="number" id="beats_per_bar" value=4>
+            <label for="beats_per_bar">beats per bar</label><br>
+            <input type="number" id="bpm" value="60">
+            <label for="bpm">bpm</label><br>
+            <input type="checkbox" id="metronome_switch">
+            <label for="metronome_switch">Metronome</label><br>
+            <input type="checkbox" id="change_chord_on_accent">
+            <label for="change_chord_on_accent">Change chord on accent</label>
+
+            <audio id="beat_accent" src="{{ url_for('static', filename='audio/beat_accent.mp3') }}"
+                preload="auto"></audio>
+            <audio id="beat_regular" src="{{ url_for('static', filename='audio/beat_regular.mp3') }}"
+                preload="auto"></audio>
+        </form>
+    </body>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/index_chord.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/index_metronome.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/index_change.js') }}"></script>
+
+    </html>
