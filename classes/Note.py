@@ -1,56 +1,41 @@
 class Note:
-    def __init__(self,base_num:int,halftone_num:int) -> None:
-        self.note_arr = [base_num,halftone_num]
+    pitch_name_arr = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+
+    def __init__(self, base_num: int, halftone_num: int, octave: int = 4) -> None:
+        self.base_num = base_num
+        self.halftone_num = halftone_num
+        self.octave = octave
+
+    def name_without_octave(self):
+        return self.pitch_name_arr[self.halftone_num - 1]
+
+    def name(self):
+        return self.pitch_name_arr[self.halftone_num - 1] + str(self.octave)
+
     def text(self) -> str:
-        base_pitch_num = self.note_arr[0]
-        halftone_pitch_num = self.note_arr[1]
-        standard_halftone_pitch_arr = [1,3,5,6,8,10,12]
-        standard_halftone_pitch = standard_halftone_pitch_arr[base_pitch_num - 1]
-        difference = halftone_pitch_num - standard_halftone_pitch
+        # This function can be more complex if you need to display accidentals like '♭' or '♯'
+        # based on the mode or key. For now, it returns the simple name.
+        base_pitch_map = {1: 'C', 2: 'D', 3: 'E', 4: 'F', 5: 'G', 6: 'A', 7: 'B'}
+        standard_halftone = Note.getStandardHalftoneNum()[self.base_num - 1]
+        diff = self.halftone_num - standard_halftone
+        
         accidental = ''
-        match difference:
-            case 0:
-                accidental = ''
-            case -2 | 10:
-                accidental = '𝄫'
-            case -1 | 11:
-                accidental = '♭'
-            case 1 | -11:
-                accidental = '♯'
-            case 2 | -10:
-                accidental = '𝄪'
-        return Note.numToBasePitch(base_pitch_num) + accidental
+        if diff in [-2, 10]: accidental = '𝄫'
+        elif diff in [-1, 11]: accidental = '♭'
+        elif diff in [1, -11]: accidental = '♯'
+        elif diff in [2, -10]: accidental = '𝄪'
+        
+        return base_pitch_map.get(self.base_num, '') + accidental
+
     def getNoteByInterval(self, interval):
-        """
-        同度    (0,0)
-
-        小二度  (1,1)
-        大二度  (1,2)
-
-        减三度  (2,2)
-        小三度  (2,3)
-        大三度  (2,4)
-        增三度  (2,5)
-
-        减四度  (3,4)
-        纯四度  (3,5)
-        增四度  (3,6)
-
-        减五度  (4,6)
-        纯五度  (4,7)
-        增五度  (4,8)
-
-        减六度  (5,7)
-        小六度  (5,8)
-        大六度  (5,9)
-        增六度  (5,10)
-
-        减七度  (6,9)
-        小七度  (6,10)
-        大七度  (6,11)
-        增七度  (6,12)
-        """
-        new_note = Note((self.note_arr[0] + interval[0] - 1) % 7 + 1, (self.note_arr[1] + interval[1] -1) % 12 + 1)
+        base_pitch_num = (self.base_num + interval[0] - 1) % 7 + 1
+        halftone_pitch_num = (self.halftone_num + interval[1] - 1) % 12 + 1
+        
+        # Adjust octave
+        octave_change = (self.base_num + interval[0] - 2) // 7
+        new_octave = self.octave + octave_change
+        
+        new_note = Note(base_pitch_num, halftone_pitch_num, new_octave)
         return new_note
     @staticmethod
     def numToBasePitch(num):

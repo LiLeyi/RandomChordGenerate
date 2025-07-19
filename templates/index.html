@@ -1,127 +1,216 @@
-<!DOCUTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <title>Random Chord Generate</title>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Chord Generate</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
 
-    <body>
-        <h1>Random Chord Generate</h1><br>
+<body>
+    <div class="container">
+        <div class="left_column">
+            <div class="first_title_div">
+                <h1 class="first_title">Random</h1>
+                <h1 class="first_title">Chord</h1>
+                <h1 class="first_title">Generate</h1>
+            </div>
 
-        <div id="chord_generate_mode_select_div">
-            <select id="chord_generate_mode_select">
-                <option value="complete_random">Complete random</option>
-                <option value="diatonic_random">Diatonic random</option>
-                <option value="common_chords_progression">Common chord progression</option>
-                <option value="custom_chords_progression">Custom chord progression</option>
-            </select><br><br>
+            <div id="chord_generate_mode_select_div" class="select_div">
+                <label class="select-label">选择生成模式:</label>
+                <custom-select id="chord_generate_mode_select">
+                    <custom-option value="complete_random">Complete random</custom-option>
+                    <custom-option value="diatonic_random">Diatonic random</custom-option>
+                    <custom-option value="custom_chords_progression" disabled title="此功能正在开发中">Custom chord progression</custom-option>
+                </custom-select>
+            </div>
+            
+            <div class="sound-visualizer">
+                <div class="visualizer-container">
+                    <div id="sound-bars">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
-        <div id="mode_complete_random">
-            <select id="root_note_pattern">
-                <option value="only_natural_pitch">Only natural pitch</option>
-                <option value="include_halftone_pitch">Include halftone pitch</option>
-            </select><br><br>
-            <fieldset id="chord_pattern">
-                <legend>Choose the chord types</legend>
-                <div>
-                    <input type="checkbox" id="common_triad" checked>
-                    <label for="common_triad">Common Triad</label>
+        <div class="right_column">
+            <div id="mode_complete_random" class="mode-panel">
+                <h2 class="panel-title">完全随机模式</h2>
+                <div class="form-group">
+                    <label for="root_note_pattern">根音模式:</label>
+                    <select id="root_note_pattern" class="styled-select">
+                        <option value="only_natural_pitch">Only natural pitch</option>
+                        <option value="include_halftone_pitch">Include halftone pitch</option>
+                    </select>
                 </div>
-                <div>
-                    <input type="checkbox" id="uncommon_triad">
-                    <label for="uncommon_triad">Uncommon Triad</label>
+                
+                <fieldset id="chord_pattern" class="styled-fieldset">
+                    <legend>选择和弦类型</legend>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="common_triad" checked>
+                            <label for="common_triad">常见三和弦</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="uncommon_triad">
+                            <label for="uncommon_triad">非常见三和弦</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="common_seventh_chord" checked />
+                            <label for="common_seventh_chord">常见七和弦</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="uncommon_seventh_chord">
+                            <label for="uncommon_seventh_chord">非常见七和弦</label>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+
+            <div id="mode_diatonic_random" class="mode-panel">
+                <h2 class="panel-title">调式随机模式</h2>
+                <div class="form-group">
+                    <label for="mode_select">选择调式:</label>
+                    <select id="mode_select" class="styled-select">
+                        {% for mode_name in mode_options %}
+                        <option value="{{mode_name}}">{{mode_name}}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div>
-                    <input type="checkbox" id="common_seventh_chord" checked />
-                    <label for="common_seventh_chord">Common Seventh Chord</label>
+                
+                <div class="form-group root-note-group">
+                    <label>选择根音:</label>
+                    <div class="root-note-controls">
+                        <select id="root_natural_note_select" class="styled-select">
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                            <option value="G">G</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                        </select>
+                        <select id="accidental" class="styled-select accidental-select">
+                            <option value="natural">♮</option>
+                            <option value="flat">♭</option>
+                            <option value="sharp">♯</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <input type="checkbox" id="uncommon_seventh_chord">
-                    <label for="uncommon_seventh_chord">Uncommon Seventh Chord</label>
+                
+                <fieldset class="styled-fieldset">
+                    <legend>选择和弦类型</legend>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="mode_diatonic_random_triads" checked>
+                            <label for="mode_diatonic_random_triads">三和弦</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="mode_diatonic_random_seventh_chords">
+                            <label for="mode_diatonic_random_seventh_chords">七和弦</label>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+
+            <div id="mode_custom_chords_progression" class="mode-panel">
+                <h2 class="panel-title">自定义和弦进行</h2>
+                <!-- 将来添加自定义和弦进行的内容 -->
+            </div>
+
+
+            <fieldset id="show_pattern" class="styled-fieldset">
+                <legend>显示选项</legend>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="show_chord_series" checked>
+                        <label for="show_chord_name">显示和弦级数</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="show_chord_name" checked>
+                        <label for="show_chord_name">显示和弦名称</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="show_chord_notes">
+                        <label for="show_chord_notes">显示和弦音符</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="play_chord_sound" checked>
+                        <label for="play_chord_sound">播放和弦声音</label>
+                    </div>
                 </div>
-            </fieldset><br>
+            </fieldset>
+            
+            <button type="button" id="submit" class="styled-button">生成和弦</button>
+            
+            <div class="result-container">
+                <div id="chord_series_show" class="result-item"></div>
+                <div id="chord_name_show" class="result-item"></div>
+                <div id="chord_notes_show" class="result-item"></div>
+            </div>
+            
+            <div class="metronome-section">
+                <h2 class="panel-title">节拍器</h2>
+                <div class="metronome-container">
+                    <div class="metronome-controls">
+                        <div class="form-group">
+                            <label for="beats_per_bar">每小节拍数:</label>
+                            <input type="number" id="beats_per_bar" value="4" min="1" max="12" class="styled-number">
+                        </div>
+                        <div class="form-group">
+                            <label for="bpm">速度 (BPM):</label>
+                            <div class="bpm-control">
+                                <button id="decrease-bpm" class="bpm-btn">-</button>
+                                <input type="number" id="bpm" value="60" min="20" max="240" class="styled-number">
+                                <button id="increase-bpm" class="bpm-btn">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="metronome-settings">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="metronome_switch">
+                            <label for="metronome_switch">启用节拍器</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="change_chord_on_accent">
+                            <label for="change_chord_on_accent">在重拍时切换和弦</label>
+                        </div>
+                    </div>
+                    
+                    <div class="volume-control">
+                        <label for="volume-slider">音量:</label>
+                        <input type="range" id="volume-slider" min="0" max="100" value="75" class="styled-slider">
+                    </div>
+                    
+                    <div id="metronome-visual" class="metronome-visual">
+                        <div class="beat-indicator" data-beat="1"></div>
+                        <div class="beat-indicator" data-beat="2"></div>
+                        <div class="beat-indicator" data-beat="3"></div>
+                        <div class="beat-indicator" data-beat="4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <audio id="beat_accent" src="{{ url_for('static', filename='audio/beat_accent.mp3') }}" preload="auto"></audio>
+            <audio id="beat_regular" src="{{ url_for('static', filename='audio/beat_regular.mp3') }}" preload="auto"></audio>
         </div>
+    </div>
 
-
-        <div id="mode_diatonic_random">
-            <select id="mode_select">
-                {% for mode_name in mode_options %}
-                <option value="{{mode_name}}">{{mode_name}}</option><br>
-                {% endfor %}
-            </select>
-            <label for="mode_select">Choose a mode</label>
-            <br><br>
-            <select id="root_natural_note_select">
-                <option value="C">C</option>
-                <option value="D">D</option>
-                <option value="E">E</option>
-                <option value="F">F</option>
-                <option value="G">G</option>
-                <option value="A">A</option>
-                <option value="B">B</option>
-            </select>
-            <select id="accidental">
-                <option value="natural">♮</option>
-                <option value="flat">♭</option>
-                <option value="sharp">♯</option>
-            </select>
-            <label for="accidental">Choose a root note</label><br><br>
-            <fieldset  id="chord_pattern">
-                <legend>Choose the chord types</legend>
-                <div>
-                    <input type="checkbox" id="mode_diatonic_random_triads" checked>
-                    <label for="mode_diatonic_random_triads">Triad</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="mode_diatonic_random_seventh_chords">
-                    <label for="mode_diatonic_random_seventh_chords">Seventh chord</label>
-                </div>
-        </div>
-
-
-        <div id="mode_custom_chords_progression"></div>
-
-
-        <fieldset id="show_pattern">
-            <legend>Choose what to show</legend>
-            <div>
-                <input type="checkbox" id="show_chord_series" checked>
-                <label for="show_chord_name">Show chord series</label>
-            </div>
-            <div>
-                <input type="checkbox" id="show_chord_name" checked>
-                <label for="show_chord_name">Show chord name</label>
-            </div>
-            <div>
-                <input type="checkbox" id="show_chord_notes">
-                <label for="show_chord_notes">Show chord notes</label>
-            </div>
-        </fieldset><br>
-        <button type="button" id="submit">Submit</button><br><br><br>
-        <div id="chord_series_show"></div>
-        <div id="chord_name_show"></div><br>
-        <div id="chord_notes_show"></div><br><br>
-        <form>
-            <input type="number" id="beats_per_bar" value=4>
-            <label for="beats_per_bar">beats per bar</label><br>
-            <input type="number" id="bpm" value="60">
-            <label for="bpm">bpm</label><br>
-            <input type="checkbox" id="metronome_switch">
-            <label for="metronome_switch">Metronome</label><br>
-            <input type="checkbox" id="change_chord_on_accent">
-            <label for="change_chord_on_accent">Change chord on accent</label>
-
-            <audio id="beat_accent" src="{{ url_for('static', filename='audio/beat_accent.mp3') }}"
-                preload="auto"></audio>
-            <audio id="beat_regular" src="{{ url_for('static', filename='audio/beat_regular.mp3') }}"
-                preload="auto"></audio>
-        </form>
-    </body>
     <script type="text/javascript" src="{{ url_for('static', filename='js/index_chord.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/index_metronome.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/index_change.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/custom_select.js') }}"></script>
+</body>
 
-    </html>
+</html>

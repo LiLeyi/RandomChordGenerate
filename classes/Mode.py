@@ -23,12 +23,12 @@ class Mode:
             txt += n.text() + ' '
         return txt
 
-    def getRandomChord(self) -> list:
+    def getRandomChord(self) -> tuple[int, Chord, Chord]:
         chord_series = random.randint(1,len(self.notes))
         return (chord_series,self.triads[chord_series-1],self.seventh_chords[chord_series-1])
 
     @staticmethod
-    def modeTypeToArr(mode_type: str)->tuple[list[list[int,int]],list[str],list[str]]:
+    def modeTypeToArr(mode_type: str)->tuple[list[list[int]],list[str],list[str]]:
         new_scale = [[0, 0], [1, 2], [2, 4], [3, 5], [4, 7], [5, 9], [6, 11]]
         new_triad_chords = ['M','m','m','M','M','m','dim']
         new_seventh_chords = ['Maj7','min7','min7','Maj7','7','min7','ø']
@@ -57,15 +57,15 @@ class Mode:
             l[0] = (l[0] - offset_tuple[0]) % 7
             l[1] = (l[1] - offset_tuple[1]) % 12
         if mode_type == 'All':
-            new_scale = [
-                [0, 11], [0, 0], [0, 1],
-                [1, 1], [1, 2], [1, 3],
-                [2, 3], [2, 4],[2, 5],
-                [3, 4], [3, 5], [3, 6],
-                [4, 6], [4, 7], [4, 8],
-                [5, 8], [5, 9], [5, 10],
-                [6, 10], [6, 11],[6, 0]
-            ]
+            new_scale = []
+            for i in range(1, 13):
+                new_scale.append([0,i]) # 这里用简化的音程表示
+            
+            # 为 'All' 模式提供匹配数量的和弦类型
+            all_triads = ['M', 'm'] * 6 
+            all_seventh_chords = ['M7', 'm7', '7'] * 4
+            return (new_scale, all_triads, all_seventh_chords)
+
         return (new_scale,new_triad_chords,new_seventh_chords)
     @staticmethod
     def getAllModeNames():
